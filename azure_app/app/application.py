@@ -1,6 +1,6 @@
 import pyodbc
 import config
-import azure_app.app.service.TemperatureService
+import service.TemperatureService
 from flask import Flask, request, render_template
 app = Flask(__name__)
 
@@ -10,7 +10,7 @@ connstring = config.CONNSTRING
 @app.route('/')
 @app.route('/index')
 def index():
-    tempServ = azure_app.TemperatureService()
+    tempServ = service.TemperatureService()
     temp = tempServ.getActualTemp
     higr = tempServ.getActualHigr
     return render_template('index.html', temperature=temp, higr=higr)
