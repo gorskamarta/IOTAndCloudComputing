@@ -1,17 +1,35 @@
 <html>
     <head>
-        <title>{{ title }} - Pogodynka</title>
+        <title>Pogodynka</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Hello!</h1>
-        <div>
-            <h2>Dane z bazy</h2>
+    <nav class="navbar navbar-light bg-warning">
+        <a class="navbar-brand" href="#">
+            <img src="https://img.icons8.com/doodle/48/000000/sun--v1.png" width="60" height="60" class="d-inline-block align-top" alt="">
+        <h1>POGODYNKA</h1>
+        </a>
+    </nav>
+    <br>
+    <div class="row">
+        <div class="col-sm-6 bg-light">
+          <div class="container-fluid">
+            <h1><span class="badge badge-primary">Aktualna temperatura:</span></h1>
             <div>
-                {{ dataToPrint }}
+                {{ temperature }}
+                <img src="https://img.icons8.com/wired/64/000000/sad-sun.png" width="60" height="60" class="d-inline-block align-top" alt="">
             </div>
         </div>
-        <div>
-            <h2>Aktualna temperatura</h2>
         </div>
+        <div class="col-sm-6 bg-light">
+          <div class="container-fluid">
+            <h1><span class="badge badge-primary">Wilgotnosc:</span></h1>
+            <div>
+                {{ higr }}
+                <img src="https://img.icons8.com/dusk/64/000000/water.png" width="60" height="60" class="d-inline-block align-top" alt="">
+            </div>
+        </div>
+        </div>
+    </div>
     </body>
 </html>

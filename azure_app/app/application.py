@@ -1,5 +1,6 @@
 import pyodbc
 import config
+import azure_app.app.service.TemperatureService
 from flask import Flask, request, render_template
 app = Flask(__name__)
 
@@ -9,14 +10,10 @@ connstring = config.CONNSTRING
 @app.route('/')
 @app.route('/index')
 def index():
-    conn = pyodbc.connect(connstring)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Test;')
-    dataToPrint = ""
-    for row in cursor:
-        dataToPrint = dataToPrint + " " + row[1]
-    conn.close()
-    return render_template('index.html', title='Home', dataToPrint=dataToPrint)
+    tempServ = azure_app.TemperatureService()
+    temp = tempServ.getActualTemp
+    higr = tempServ.getActualHigr
+    return render_template('index.html', temperature=temp, higr=higr)
 
 @app.route('/newevent', methods=['POST','GET'])
 def newevent():
