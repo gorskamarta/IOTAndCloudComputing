@@ -1,2 +1,3 @@
 config.py
 .idea/
+azure_app/app/config.py
