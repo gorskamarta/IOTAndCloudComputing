@@ -1,19 +1,21 @@
 import pyodbc
 import config
-import service.TemperatureService
 from flask import Flask, request, render_template
+from service.SensorService import SensorService
 app = Flask(__name__)
 
 webkey = config.WEBKEY
 connstring = config.CONNSTRING
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET'])
 def index():
-    tempServ = service.TemperatureService()
-    temp = tempServ.getActualTemp
-    higr = tempServ.getActualHigr
-    return render_template('index.html', temperature=temp, higr=higr)
+    tempServ = SensorService()
+    temp = tempServ.getActualTemp()
+    higr = tempServ.getActualHigr()
+    vibr = tempServ.getActualVibr()
+    
+    return render_template('index.html', temperature=temp, higr=higr, vibr=vibr)
 
 @app.route('/newevent', methods=['POST','GET'])
 def newevent():
