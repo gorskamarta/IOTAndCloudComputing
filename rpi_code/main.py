@@ -7,6 +7,14 @@ import board
 import busio
 import adafruit_adxl34x
 import Adafruit_DHT
+#do hmóry
+import requests
+import json
+API_ENDPOINT = "https://cdv22626-test10.azurewebsites.net/newevent"
+#API_ENDPOINT = "http://192.168.1.40:5000/newevent"
+API_KEY = "JebanjeFjelkyKutsz666"
+
+readinterval = 10 #seconds
 
 calibmax = 1.05
 calibmin = 0.95
@@ -40,7 +48,21 @@ GPIO.setup(GPIO_ECHO, GPIO.IN)
 GPIO.setup(LED1_OUT, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(LED2_OUT, GPIO.OUT, initial=GPIO.LOW)
 
-def antypodpierdol(oldacc):
+def cloud(EventType,Value):
+    data = {'Token':API_KEY, 'EventType':EventType, 'Value':Value}
+    r = requests.post(url = API_ENDPOINT, data = data)
+    pastebin_url = r.text
+    print("EventType: [" + EventType + "], Value: [" + Value + "]")
+    print("Server response: %s"%pastebin_url)
+    parsed_json = json.loads(pastebin_url)
+    if parsed_json['LedBlue']=='ON':
+        GPIO.output(LED2_OUT, GPIO.HIGH)
+    if parsed_json['LedBlue']=='OFF':
+        GPIO.output(LED2_OUT, GPIO.LOW)
+
+
+def vibrdetect(oldacc):
+    val = 0
     pctacc = [oldacc[0] / accelerometer.acceleration[0],
               oldacc[1] / accelerometer.acceleration[1],
               oldacc[2] / accelerometer.acceleration[2]]
@@ -48,9 +70,10 @@ def antypodpierdol(oldacc):
        pctacc[0]>calibmax or pctacc[0]<calibmin or \
        pctacc[1]>calibmax or pctacc[1]<calibmin or \
        pctacc[2]>calibmax or pctacc[2]<calibmin:
-        print("Żyd chce zajebać czujnik")
-    time.sleep(1)
+        val = 1
+    #time.sleep(1)
     oldacc = [accelerometer.acceleration[0],accelerometer.acceleration[1],accelerometer.acceleration[2]]
+    return val
 
 
 def distance():
@@ -83,39 +106,53 @@ def distance():
 if __name__ == '__main__':
     try:
         while True:
-            ##humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+            try:
+                DHT22_lastread
+            except:
+                DHT22_lastread = time.time()
+                
+            try:
+                checkanty
+            except:
+                checkanty = 0
+                
+            try:
+                vibrevent
+            except:
+                vibrevent = 'None'
+                
+            DHT22_time = time.time() - DHT22_lastread
+            if DHT22_time>readinterval:
+                DHT22_lastread = time.time()
+                humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+                cloud('TEMP', str(round(temperature,1)))
+                cloud('HIGR', str(round(humidity,1)))
+                if vibrevent!='None':
+                    cloud('VIBR',vibrevent)
+                    vibrevent = 'None'
+                    
             
             dist = distance()
-            print ("Measured Distance = %.1f cm" % dist)
+            #print ("Measured Distance = %.1f cm" % dist)
+            oldacc = [accelerometer.acceleration[0],accelerometer.acceleration[1],accelerometer.acceleration[2]]
             time.sleep(0.100)
+            checkanty = checkanty + vibrdetect(oldacc)
+            
+
+            
             if dist<20:
                 GPIO.output(LED1_OUT, GPIO.HIGH)
-                GPIO.output(LED2_OUT, GPIO.LOW)
-                if ZYD==True:
-                    print ("Żyd ciągle przy bramie")
-                else:
-                    print ("Żyd przy bramie")
-                    ZYD_start = time.time()
-                ZYD = True;
-                oldacc = [accelerometer.acceleration[0],accelerometer.acceleration[1],accelerometer.acceleration[2]]
-                for x in range(5): #sleep5
-                    antypodpierdol(oldacc)
-                
+                #GPIO.output(LED2_OUT, GPIO.LOW)
+                print("Vandal:" + str(checkanty))
+                if checkanty>5:
+                    vibrevent = 'Vandal'
+                    checkanty = 0
             else:
-                if ZYD==True:
-                    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
-                    ##if humidity is not None and temperature is not None:
-                        
-                    print ("Żyd zniknął")
-                    ZYD_stop = time.time() - ZYD_start
-                    print ("Żyd wypalał się około " + str(int(ZYD_stop)) + " sekund")
-                    print ("W temperaturze " + str(round(temperature,1)) + " oC")
-                    print ("Przy wilgodności powietrza " + str(round(humidity,1)) + " %")
-                    # debounce jakby żyd się kręcił przez 10 sekund
-                    time.sleep(10) 
-                ZYD = False;
+                if checkanty>1 and vibrevent != 'Vandal':
+                    vibrevent = 'Ground'
+                    checkanty = 0
                 GPIO.output(LED1_OUT, GPIO.LOW)
-                GPIO.output(LED2_OUT, GPIO.HIGH)
+                #GPIO.output(LED2_OUT, GPIO.HIGH)
  
         # Reset by pressing CTRL + C
     except KeyboardInterrupt:

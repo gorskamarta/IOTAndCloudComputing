@@ -64,6 +64,42 @@ def login():
             response.set_cookie('session_id', sessId)
             return response
         else:
-            return "Problem z zalogowaniem"
+            message = 'Problem z zalogowaniem'
+            return render_template('exception.html', message=message)
 
-    
+@app.route('/setLed', methods=['POST', 'GET'])
+def setLed():
+    sessId = request.cookies.get('session_id')
+    if sessId == None:
+        isActive = 0
+    sessServ = SessionService()
+    isActive = sessServ.isActive(sessId)
+    if isActive == 1:
+        contrServ = ControlService()
+        if request.method == 'GET':
+            checkedOn = ''
+            checkedOff = ''
+            isOn = contrServ.getDeviceLedBlue()
+            if isOn == 1:
+                checkedOn = 'checked'
+            else:
+                checkedOff = 'checked'
+            return render_template('setLed.html', checkedOn= checkedOn, checkedOff=checkedOff)
+        try:
+            on = request.form('blueLedOn')
+        except:
+            on = '0'
+        try:
+            off = request.form('blueLedOff')
+        except:
+            off = '0'
+        if on == '1' & off == '1':
+            message = 'Nie mozna wlaczyc i wylaczyc jednoczesnie'
+            return render_template('exception.html', message=message)
+        if on == '1':
+            contrServ.setDeviceLedBlueON()
+        if off == '1':
+            contrServ.setDeviceLedBlueOFF()
+
+    return make_response(redirect('/index'))
+
