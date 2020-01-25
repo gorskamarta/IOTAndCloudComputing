@@ -39,7 +39,14 @@
             </div>
         </div>
         </div>
-
+    </div>
+    <script>
+        if ( {{ sess }} == 1) {
+            html = '<p>To jest test ifa javascriptowego tu bedzie button</p>';
+        document.getElementById("LedBar").innerHTML = html;
+        }
+    </script>
+    <div id="LedBar">
     </div>
     </body>
 </html>
