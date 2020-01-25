@@ -1,3 +1,4 @@
 config.py
 .idea/
 azure_app/app/config.py
+azure_app/app/service/__pycache__

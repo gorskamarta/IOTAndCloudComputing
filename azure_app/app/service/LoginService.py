@@ -9,8 +9,7 @@ class LoginService:
     def login(self, login, passwd):
         passwd_hash = self.hashPasswd(passwd)
         cursor = self.conn.cursor()
-        cursor.execute(
-            "SELECT Id AS Granted FROM UserAccess WHERE UserName = '" + login + "' AND UserPassword = '" + passwd_hash + "'")
+        cursor.execute("SELECT Id AS Granted FROM UserAccess WHERE UserLogin = '" + login + "' AND UserPassword = '" + passwd_hash + "';")
         row = cursor.fetchone()
         if not row:
             return 0

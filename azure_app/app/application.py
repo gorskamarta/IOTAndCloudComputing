@@ -2,6 +2,7 @@ import pyodbc
 import config
 from flask import Flask, request, render_template, make_response, redirect
 from service.SensorService import SensorService
+from service.ControlService import ControlService
 from service.LoginService import LoginService
 from service.SessionService import SessionService
 app = Flask(__name__)
@@ -23,11 +24,13 @@ def index():
     elif sessId != None:
         sessServ = SessionService()
         isActive = sessServ.isActive(sessId)
-
+    
     return render_template('index.html', temperature=temp, higr=higr, vibr=vibr, sess=isActive)
 
 @app.route('/newevent', methods=['POST','GET'])
 def newevent():
+    contServ = ControlService()
+    
     result = "No method"
     if request.method == 'POST':
         Token     = request.form.get('Token')
@@ -41,7 +44,8 @@ def newevent():
             cursor.execute(query)
             conn.commit()
             conn.close()
-            result = "New entry registred"
+            result =          "{\"LedRed\": \"" + contServ.getDeviceLedRed()  + "\","
+            result = result + "\"LedBlue\": \"" + contServ.getDeviceLedBlue() + "\"}"
     return result
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -62,3 +66,4 @@ def login():
         else:
             return "Problem z zalogowaniem"
 
+    

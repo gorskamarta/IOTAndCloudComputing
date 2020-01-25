@@ -9,7 +9,7 @@ class SessionService:
     def setSession(self, userId):
         sessId = secrets.token_urlsafe(16)
         cursor = self.conn.cursor()
-        query = "INSERT INTO Sessions (UserId, SessId) VALUES (" + userId + ",'" + sessId + "');"
+        query = "INSERT INTO Sessions (UserId, SessId) VALUES ('" + str(userId) + "','" + str(sessId) + "');"
         cursor.execute(query)
         self.conn.commit()
         return sessId
@@ -17,7 +17,7 @@ class SessionService:
     def isActive(self, sessId):
         cursor = self.conn.cursor()
         cursor.execute(
-            "SELECT IsActive FROM Sessions WHERE SessId = '" + sessId + "'")
+            "SELECT IsActive FROM Sessions WHERE SessId = '" + str(sessId) + "'")
         row = cursor.fetchone()
         if not row:
             return 0
