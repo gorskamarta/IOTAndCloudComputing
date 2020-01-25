@@ -84,21 +84,11 @@ def setLed():
                 checkedOn = 'checked'
             else:
                 checkedOff = 'checked'
-            return render_template('setLed.html', checkedOn= checkedOn, checkedOff=checkedOff)
-        try:
-            on = request.form('blueLedOn')
-        except:
-            on = '0'
-        try:
-            off = request.form('blueLedOff')
-        except:
-            off = '0'
-        if on == '1' & off == '1':
-            message = 'Nie mozna wlaczyc i wylaczyc jednoczesnie'
-            return render_template('exception.html', message=message)
-        if on == '1':
+            return render_template('setLed.html', checkedOn=checkedOn, checkedOff=checkedOff)
+        stan = request.form('stan')
+        if stan == 'on':
             contrServ.setDeviceLedBlueON()
-        if off == '1':
+        if stan == 'off':
             contrServ.setDeviceLedBlueOFF()
 
     return make_response(redirect('/index'))

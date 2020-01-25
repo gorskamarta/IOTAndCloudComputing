@@ -13,8 +13,10 @@
         <div class="container">
             <form action="/setLed" method="post">
                 <label><b>Stan urzadzenia</b></label><br>
-                <input type="checkbox" name="blueLedOn" value="on" {{ checkedOn }}>Wlaczona<br>
-                <input type="checkbox" name="blueLedOff" value="off" {{ checkedOff }}>Wylaczona<br>
+                <label><input type="radio" name="stan" {{ checkedOn }} value="on"> Wlaczone</label>
+                <br>
+                <label><input type="radio" name="stan" {{ checkedOff }} value="off"> Wylaczone</label>
+                <br>
                 <button type="submit">Wyslij</button>
             </form>
         </div>
