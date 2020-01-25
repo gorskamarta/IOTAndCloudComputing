@@ -10,9 +10,10 @@ import Adafruit_DHT
 #do hmóry
 import requests
 import json
-API_ENDPOINT = "https://cdv22626-test10.azurewebsites.net/newevent"
-#API_ENDPOINT = "http://192.168.1.40:5000/newevent"
-API_KEY = "JebanjeFjelkyKutsz666"
+import config
+
+API_ENDPOINT = config.API_ENDPOINT
+API_KEY = config.API_KEY
 
 readinterval = 10 #seconds
 

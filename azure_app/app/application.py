@@ -51,6 +51,14 @@ def newevent():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'GET':
+        sessId = request.cookies.get('session_id')
+        if sessId == None:
+            isActive = 0
+        sessServ = SessionService()
+        isActive = sessServ.isActive(sessId)
+        if isActive == 1:
+            response = make_response(redirect('/index?message=AlreadyLog'))
+            return response
         return render_template('login.html')
     login = request.form.get('uname')
     passwd = request.form.get('psw')
@@ -63,9 +71,8 @@ def login():
             response = make_response(redirect('/index'))
             response.set_cookie('session_id', sessId)
             return response
-        else:
-            message = 'Problem z zalogowaniem'
-            return render_template('exception.html', message=message)
+    message = 'Problem z zalogowaniem'
+    return render_template('exception.html', message=message)
 
 @app.route('/setLed', methods=['POST', 'GET'])
 def setLed():
@@ -80,16 +87,19 @@ def setLed():
             checkedOn = ''
             checkedOff = ''
             isOn = contrServ.getDeviceLedBlue()
-            if isOn == 1:
+            if isOn == 'ON':
                 checkedOn = 'checked'
             else:
                 checkedOff = 'checked'
             return render_template('setLed.html', checkedOn=checkedOn, checkedOff=checkedOff)
-        stan = request.form('stan')
+        stan = request.form.get('stan')
         if stan == 'on':
             contrServ.setDeviceLedBlueON()
         if stan == 'off':
             contrServ.setDeviceLedBlueOFF()
+        response = make_response(redirect('/setLed'))
+        return response
 
-    return make_response(redirect('/index'))
+    message = 'Zaloguj sie przed proba sterowania'
+    return render_template('exception.html', message=message)
 
