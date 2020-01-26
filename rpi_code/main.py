@@ -1,4 +1,4 @@
-#Żydoskop do bramy
+#Weather reader
 #Libraries
 import RPi.GPIO as GPIO
 import time
@@ -33,7 +33,6 @@ GPIO_TRIGGER = 23
 GPIO_ECHO = 24
 LED1_OUT = 20
 LED2_OUT = 21
-ZYD = False
 
 #DHT settings
 DHT_SENSOR = Adafruit_DHT.DHT22
